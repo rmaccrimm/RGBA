@@ -5,3 +5,5 @@ authors = ["Roderick MacCrimmon <r.maccrimm@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+num-traits = "0.2"
+num-derive = "0.3"
