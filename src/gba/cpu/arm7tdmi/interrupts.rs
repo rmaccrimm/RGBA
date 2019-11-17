@@ -1,3 +1,9 @@
 pub struct Interrupts {
-    i: bool
+    pub i: bool
+}
+
+impl Interrupts {
+    pub fn new() -> Interrupts {
+        Interrupts { i: false }
+    }
 }

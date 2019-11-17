@@ -16,7 +16,7 @@ impl MMU {
         }
     }
 
-    fn read(&self, addr: u32) -> u32 {
+    pub fn read(&self, addr: u32) -> u32 {
         let addr = (addr << 2) as usize;
         let bytes = &self.ram[addr..addr + 4];
         bytes.iter()
@@ -24,7 +24,7 @@ impl MMU {
             .fold(0, |wd, (i, b)| { wd | (*b as u32) << i * 8 })
     }
 
-    fn write(&mut self, addr: u32, data: u32) {
+    pub fn write(&mut self, addr: u32, data: u32) {
         let addr = (addr << 2) as usize;
         let bytes = &mut self.ram[addr..addr + 4];
         for (i, b) in bytes.iter_mut().enumerate() {
