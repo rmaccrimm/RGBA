@@ -7,10 +7,10 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct GBA {
-    cpu: ARM7TDMI,
-    gpu: GPU,
-    apu: APU,
-    bus: Rc<RefCell<Bus>>,
+    pub cpu: ARM7TDMI,
+    pub gpu: GPU,
+    pub apu: APU,
+    pub bus: Rc<RefCell<Bus>>,
 }
 
 impl GBA {
@@ -26,6 +26,6 @@ impl GBA {
 
     // begin program execution
     pub fn run(&mut self) {
-
+        self.cpu.step();
     }
 }

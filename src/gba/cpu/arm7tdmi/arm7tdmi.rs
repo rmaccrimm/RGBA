@@ -1,32 +1,32 @@
-use crate::gba::bus::Bus;
 use super::registers::Registers;
-use std::rc::Rc;
+// use super::instruction::execute;
+use crate::gba::bus::Bus;
 use std::cell::RefCell;
-
-enum State {
-    ARM,
-    THUMB,
-}
+use std::rc::Rc;
 
 pub struct ARM7TDMI {
+    pub reg: Registers,
     bus: Rc<RefCell<Bus>>,
-    registers: Registers,
-    state: State,
+    arm_decode_table: Vec<Option<Box<dyn FnMut()>>>
 }
 
 impl ARM7TDMI {
     pub fn new(bus: Rc<RefCell<Bus>>) -> ARM7TDMI {
         ARM7TDMI {
             bus: bus,
-            registers: Registers::new(),
-            state: State::ARM,
+            reg: Registers::new(),
+            arm_decode_table: Vec::new()
         }
     }
 
     pub fn step(&mut self) {
-        let mut bus = self.bus.borrow_mut();
-        let x = bus.mmu.read(0);
-        println!("{}", x);
-        bus.mmu.write(0, 0xfae30000);
+        // execute(self.fetch(), self);
+    }
+
+    pub fn fetch(&mut self) -> u32 {
+        let bus = self.bus.borrow_mut();
+        let instr = bus.mmu.read(self.reg.PC);
+        self.reg.PC += 1;
+        instr
     }
 }
