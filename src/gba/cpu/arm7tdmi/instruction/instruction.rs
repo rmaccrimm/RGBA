@@ -1,81 +1,40 @@
 #![allow(unused_variables)]
 
-use crate::gba::cpu::arm7tdmi::ARM7TDMI;
-use crate::gba::cpu::arm7tdmi::registers::Status;
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
+use crate::gba::cpu::arm7tdmi::registers::{Registers, Flag};
 
-pub fn execute(instr: u32, cpu: &mut ARM7TDMI) {
-    let Thumb = cpu.reg.CPSR & (Status::Thumb as u32) != 0;
-    if Thumb {
-        decode_Thumb(instr, cpu)
+pub fn check_cond(reg: &mut Registers, instr: u32) -> bool {
+    let op: u8 = (instr >> 28) as u8;
+    let n = reg.status(Flag::N);
+    let z = reg.status(Flag::Z);
+    let c = reg.status(Flag::C);
+    let v = reg.status(Flag::V);
+    match op {
+        0b0000 => z,
+        0b0001 => !z,
+        0b0010 => c,
+        0b0011 => !c,
+        0b0100 => n,
+        0b0101 => !n,
+        0b0110 => v,
+        0b0111 => !v,
+        0b1000 => c && !z,
+        0b1001 => !c || z,
+        0b1010 => n == v,
+        0b1011 => n != v,
+        0b1100 => !z && (n == v),
+        0b1101 => z && (n != v),
+        0b1110 => true,
+        _      => false, // undefined 
+    }
+}
+
+pub fn add(reg: &mut Registers, instr: u32) {
+    if !check_cond(reg, instr) { return }
+    if ((instr >> 20) & 1) != 0 { // S
+        
     }
     else {
-        decode_ARM(instr, cpu);
+        
     }
 }
-
-#[derive(FromPrimitive)]
-enum Cond {
-    EQ = 0,
-    NE = 1,
-    CS = 2,
-    CC = 3,
-    MI = 4,
-    PL = 5,
-    VS = 6,
-    VC = 7,
-    HI = 8,
-    LS = 9,
-    GE = 10,
-    LT = 11,
-    GT = 12,
-    LE = 13,
-    AL = 14,
-    UNPREDICTABLE = 15,
-}
-
-fn check_cond(instr: u32, cpu: &mut ARM7TDMI) -> bool {
-    let n = cpu.reg.CPSR & (Status::N as u32) != 0;
-    let z = cpu.reg.CPSR & (Status::Z as u32) != 0;
-    let c = cpu.reg.CPSR & (Status::C as u32) != 0;
-    let v = cpu.reg.CPSR & (Status::V as u32) != 0;
-    // impossible to fail, since only 4 bits
-    let cond: Cond = FromPrimitive::from_u32(instr >> 28 & 0xf).unwrap();
-    match cond {
-        Cond::EQ =>  z,
-        Cond::NE => !z,
-        Cond::CS =>  c,
-        Cond::CC => !c,
-        Cond::MI =>  n,
-        Cond::PL => !n,
-        Cond::VS =>  v,
-        Cond::VC => !v,
-        Cond::HI =>  c || !z,
-        Cond::LS => !c ||  z,
-        Cond::GE => n == v,
-        Cond::LT => n != v,
-        Cond::GT => !z && (n == v),
-        Cond::LE =>  z || (n != v),
-        Cond::AL =>  true,
-        Cond::UNPREDICTABLE => false
-    }
-}
-
-fn decode_ARM(instr: u32, cpu: &mut ARM7TDMI) {
-
-}
-
-fn decode_Thumb(instr: u32, cpu: &mut ARM7TDMI) {
-    
-}
-
-fn decode_ALU(instr: u32, cpu: &mut ARM7TDMI) {
-    
-}
-
-fn decode_branch(instr: u32, cpu: &mut ARM7TDMI) {
-    
-}
-
     

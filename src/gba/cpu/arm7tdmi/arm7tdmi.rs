@@ -1,19 +1,30 @@
 use super::registers::Registers;
-// use super::instruction::execute;
 use crate::gba::bus::Bus;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+pub enum Mode {
+    User,
+    FIQ,
+    IRQ,
+    Supervisor,
+    Abort,
+    Undefined,
+    System
+}
+
 pub struct ARM7TDMI {
     pub reg: Registers,
     bus: Rc<RefCell<Bus>>,
-    arm_decode_table: Vec<Option<Box<dyn FnMut()>>>
+    mode: Mode,
+    arm_decode_table: Vec<Option<Box<dyn FnMut()>>>,
 }
 
 impl ARM7TDMI {
     pub fn new(bus: Rc<RefCell<Bus>>) -> ARM7TDMI {
         ARM7TDMI {
             bus: bus,
+            mode: Mode::User,
             reg: Registers::new(),
             arm_decode_table: Vec::new()
         }
@@ -28,5 +39,9 @@ impl ARM7TDMI {
         let instr = bus.mmu.read(self.reg.PC);
         self.reg.PC += 1;
         instr
+    }
+
+    pub fn change_mode(&mut self, mode: Mode) {
+        self.mode = mode;
     }
 }

@@ -2,6 +2,7 @@
 #![allow(non_snake_case)]
 
 mod gba;
+mod util;
 use gba::GBA;
 
 struct Tmp {
