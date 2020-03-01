@@ -1,19 +1,17 @@
-use super::cpu::arm7tdmi::Interrupts;
+use super::cpu::arm7tdmi::ARM7TDMI;
 use super::memory::MMU;
 
-/*  Bus owns all state that is shared between components, accessed globally via Rc<RefCell<Bus>>.
-    Might eventually refactor into a heirarchy depending on performance
-*/
+/// Bus provides access to all shared state within the emulator
 pub struct Bus {
     pub mmu: MMU,
-    pub interrupts: Interrupts
+    pub cpu: ARM7TDMI
 }
 
 impl Bus {
     pub fn new() -> Bus {
         Bus {
             mmu: MMU::new(),
-            interrupts: Interrupts::new()
+            cpu: ARM7TDMI::new()
         }
     }
 }

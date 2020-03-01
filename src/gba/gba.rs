@@ -1,31 +1,34 @@
-use super::cpu::arm7tdmi::ARM7TDMI;
-use super::gpu::GPU;
-use super::apu::APU;
+use super::cpu::arm7tdmi::ARMDecodeTable;
 use super::bus::Bus;
 
-use std::cell::RefCell;
-use std::rc::Rc;
-
 pub struct GBA {
-    pub cpu: ARM7TDMI,
-    pub gpu: GPU,
-    pub apu: APU,
-    pub bus: Rc<RefCell<Bus>>,
+    pub bus: Bus,
+    arm_decode_table: ARMDecodeTable
 }
 
 impl GBA {
     pub fn new() -> GBA {
-        let shared = Rc::new(RefCell::new(Bus::new()));
         GBA {
-            bus: Rc::clone(&shared),
-            cpu: ARM7TDMI::new(Rc::clone(&shared)),
-            gpu: GPU::new(Rc::clone(&shared)),
-            apu: APU::new(Rc::clone(&shared)),
+            bus: Bus::new(),
+            arm_decode_table: ARMDecodeTable::new()
         }
     }
 
-    // begin program execution
+    /// begin program execution
     pub fn run(&mut self) {
-        self.cpu.step();
+        
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_call_stored_closure() {
+        let mut gba = GBA::new();
+        gba.arm_decode_table.execute(&mut gba.bus, 12);
+        assert!(gba.bus.cpu.R0 == 19);
+    }
+}
+
