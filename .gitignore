@@ -1,4 +1,5 @@
 /target
 /reference/
+/scratch/
 **/*.rs.bk
 *.emacs

@@ -16,7 +16,7 @@ impl GBA {
 
     /// begin program execution
     pub fn run(&mut self) {
-        
+        self.arm_decode_table.execute(&mut self.bus, 12);
     }
 }
 
@@ -27,7 +27,7 @@ mod test {
     #[test]
     fn test_call_stored_closure() {
         let mut gba = GBA::new();
-        gba.arm_decode_table.execute(&mut gba.bus, 12);
+        gba.run();
         assert!(gba.bus.cpu.R0 == 19);
     }
 }

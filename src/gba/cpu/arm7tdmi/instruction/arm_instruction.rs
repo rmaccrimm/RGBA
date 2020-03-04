@@ -1,6 +1,7 @@
 #![allow(unused_variables)]
 
-use crate::gba::cpu::arm7tdmi::registers::{Registers, Flag};
+use crate::gba::bus::Bus;
+use crate::gba::cpu::arm7tdmi::{Registers, Flag};
 
 pub fn check_cond(reg: &mut Registers, instr: u32) -> bool {
     let op: u8 = (instr >> 28) as u8;
@@ -28,13 +29,15 @@ pub fn check_cond(reg: &mut Registers, instr: u32) -> bool {
     }
 }
 
-pub fn add(reg: &mut Registers, instr: u32) {
-    if !check_cond(reg, instr) { return }
-    if ((instr >> 20) & 1) != 0 { // S
-        
-    }
-    else {
-        
-    }
+pub fn arm_branch(bus: &mut Bus, instr: u32) {
+    
+}
+
+pub fn arm_branch_exchange(bus: &mut Bus, instr: u32) {
+    
+}
+
+pub fn arm_data_proc_immediate(bus: &mut Bus, instr: u32) {
+    
 }
     
