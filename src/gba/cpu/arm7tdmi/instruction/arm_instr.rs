@@ -29,15 +29,23 @@ pub fn check_cond(reg: &mut Registers, instr: u32) -> bool {
     }
 }
 
-pub fn arm_branch(bus: &mut Bus, instr: u32) {
+pub fn branch(bus: &mut Bus, instr: u32) {
     
 }
 
-pub fn arm_branch_exchange(bus: &mut Bus, instr: u32) {
+pub fn branch_exchange(bus: &mut Bus, instr: u32) {
     
 }
 
-pub fn arm_data_proc_immediate(bus: &mut Bus, instr: u32) {
+pub fn data_proc_immediate(bus: &mut Bus, instr: u32) {
+    
+}
+
+pub fn data_proc(bus: &mut Bus, instr: u32) {
+
+}
+
+pub fn multiply(bus: &mut Bus, instr: u32) {
     
 }
     

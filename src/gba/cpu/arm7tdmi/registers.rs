@@ -72,5 +72,4 @@ fn clear(reg: u32, mask: u32) -> bool {
 
 #[cfg(test)]
 mod test {
-    use super::*;
 }

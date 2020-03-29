@@ -16,19 +16,11 @@ impl GBA {
 
     /// begin program execution
     pub fn run(&mut self) {
-        self.arm_decode_table.execute(&mut self.bus, 12);
+        self.arm_decode_table.execute(&mut self.bus, 0);
     }
 }
 
 #[cfg(test)]
 mod test {
-    use super::*;
-
-    #[test]
-    fn test_call_stored_closure() {
-        let mut gba = GBA::new();
-        gba.run();
-        assert!(gba.bus.cpu.R0 == 19);
-    }
 }
 

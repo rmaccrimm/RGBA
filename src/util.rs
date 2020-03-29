@@ -6,6 +6,15 @@ pub fn clear(word: u32, mask: u32) -> u32 {
     return word & !mask;
 }
 
+/// Extract bits in range [low, high)
+pub fn bits(x: u32, low: u32, high: u32) -> u32 {
+    assert!(high > low);
+    assert!(low <= 32);
+    assert!(high <= 32);
+    let mask: u64 = (1 << (high - low)) - 1;
+    return (x >> low) & (mask as u32);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -28,5 +37,15 @@ mod test {
         assert!(clear(a, a) == 0);
         assert!(clear(0, a) == 0);
         assert!(clear(a, b) == c);
+    }
+
+    #[test]
+    fn test_bits() {
+        let x = 0b1110_0101_0001_0110_0011_0100_0000_1101;
+        assert!(bits(x, 0, 32)  == x);
+        assert!(bits(x, 0, 1) == 1);
+        assert!(bits(x, 2, 10) == 0b00000011);
+        assert!(bits(x, 0, 20) == 0b01100011010000001101);
+        assert!(bits(x, 11, 27) == 0b1010001011000110);
     }
 }
