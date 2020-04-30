@@ -54,6 +54,7 @@ impl Registers {
         result != 0
     }
 
+    #[allow(unused_variables)]
     pub fn set_flag(&mut self, flag: Flag) {
         // match flag {
             // N => set(self.CPSR, N)

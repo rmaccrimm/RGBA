@@ -20,24 +20,27 @@ pub fn cond_string(instr: u32) -> String {
 }
 
 pub fn branch(instr: u32) -> String {
-    let offset = (instr & 0x7fffff) << 4;
+    let _offset = (instr & 0x7fffff) << 4;
     let link = (instr >> 24 & 1) == 1;
     format!("{}", if link { "BL" } else { "B" })
 }
 
+#[allow(unused_variables)]
 pub fn branch_exchange(instr: u32) -> String {
-    let link = (instr >> 24 & 1) == 1;
-    format!("{}", if link { "BLX" } else { "BX" })
+    format!("BX")
 }
 
-pub fn data_proc_immediate(instr: u32) -> String {
-    String::from("<Data Proc immediate>")
+#[allow(unused_variables)]
+pub fn alu_immediate(instr: u32) -> String {
+    String::from("<ALU immediate>")
 }
 
-pub fn data_proc(instr: u32) -> String {
-    String::from("<Data Proc>")
+#[allow(unused_variables)]
+pub fn alu(instr: u32) -> String {
+    String::from("<ALU>")
 }
 
+#[allow(unused_variables)]
 pub fn multiply(instr: u32) -> String {
     String::from("<Multiply>")
 }
