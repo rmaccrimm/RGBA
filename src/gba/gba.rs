@@ -19,6 +19,7 @@ impl GBA {
         self.arm_decode_table.execute(&mut self.bus, 0);
     }
 }
+    
 
 #[cfg(test)]
 mod test {
