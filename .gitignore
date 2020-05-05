@@ -3,3 +3,5 @@
 /scratch/
 **/*.rs.bk
 *.emacs
+*~
+*#
