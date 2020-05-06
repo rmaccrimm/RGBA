@@ -7,7 +7,7 @@ mod gba;
 mod util;
 
 use gio::prelude::*;
-use gtk::prelude::*;
+use gtk::Application;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -17,7 +17,7 @@ use gba::ui::debug::DebugWindow;
 
 fn main() {
     let gba = Rc::new(RefCell::new(GBA::new()));
-    let application = gtk::Application::new(Some("rgba.emu"), Default::default())
+    let application = Application::new(Some("rgba.emu"), Default::default())
         .expect("GTK initialization failed");
     application.connect_activate(move |app| {
         DebugWindow::new(app, gba.clone());

@@ -1,7 +1,9 @@
 /target
 /reference/
 /scratch/
+/scripts/
 **/*.rs.bk
 *.emacs
+*.bin
 *~
 *#
