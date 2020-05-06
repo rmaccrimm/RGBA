@@ -1,16 +1,26 @@
 extern crate gio;
 extern crate gtk;
 
-use gtk::prelude::*;
 use gio::prelude::*;
+use gtk::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::gba::GBA;
 
+#[derive(Clone)]
+struct MemoryView {
+    model: gtk::ListStore
+}
+
+#[derive(Clone)]
+struct RegisterView {
+    model: gtk::ListStore
+}
+
 pub struct DebugWindow {
-    mem_model: gtk::ListStore,
-    reg_model: gtk::ListStore,
+    mem_view: MemoryView,
+    reg_view: RegisterView,
 }
 
 fn append_text_column(treeview: &gtk::TreeView, model_index: i32, title: &str) {
@@ -29,41 +39,62 @@ fn append_toggle_column(treeview: &gtk::TreeView) {
     treeview.append_column(&toggle_column);
 }
 
-fn update_models(
-    reg_model: &gtk::ListStore,
-    mem_model: &gtk::ListStore,
-    gba_ref: &Rc<RefCell<GBA>>,
-) {
-    reg_model.clear();
-    let pc = gba_ref.borrow().bus.cpu.PC;
-    reg_model.insert_with_values(None, &[0, 1], &[&"PC:", &format!["{:08X}", pc]]);
-    mem_model.clear();
-    for i in 0u32..100 {
-        let val = gba_ref.borrow().bus.mmu.read(i);
-        mem_model.insert_with_values(
-            None,
-            &[0, 1],
-            &[&format!("{:08X}", i), &format!("{:08X}", val)],
-        );
+impl MemoryView {
+    pub fn new(tview: &gtk::TreeView) -> Self {
+        let model = gtk::ListStore::new(&[String::static_type(); 3]);
+        append_toggle_column(&tview);
+        append_text_column(&tview, 0, "Address");
+        append_text_column(&tview, 1, "Value");
+        append_text_column(&tview, 2, "Instruction");
+        tview.set_model(Some(&model));
+        MemoryView { model }
+    }
+
+    pub fn update(&self, gba: &Rc<RefCell<GBA>>) {
+        self.model.clear();
+        for i in 0u32..100 {
+            let val = gba.borrow().bus.mmu.read(i);
+            self.model.insert_with_values(
+                None,
+                &[0, 1, 2],
+                &[&format!("{:08X}", i), &format!("{:08X}", val), &""],
+            );
+        }
+    }
+}
+
+impl RegisterView {
+    pub fn new(tview: &gtk::TreeView) -> Self {
+        let model = gtk::ListStore::new(&[String::static_type(); 2]);
+        append_text_column(&tview, 0, "");
+        append_text_column(&tview, 1, "");
+        tview.set_model(Some(&model));
+        RegisterView{ model }
+    }
+
+    pub fn update(&self, gba: &Rc<RefCell<GBA>>) {
+        let pc = gba.borrow().bus.cpu.PC;
+        self.model.clear();
+        self.model.insert_with_values(None, &[0, 1], &[&"PC:", &format!["{:08X}", pc]]);
     }
 }
 
 impl DebugWindow {
-    pub fn new(application: &gtk::Application, gba_ref: Rc<RefCell<GBA>>) -> Self {
+    pub fn new(application: &gtk::Application, gba: Rc<RefCell<GBA>>) -> Self {
         let glade_src = include_str!("glade/DebugWindow.glade");
         let builder = gtk::Builder::new_from_string(glade_src);
 
-        let col_types = &[String::static_type(), String::static_type()];
-
-        let mem_model = gtk::ListStore::new(col_types);
-        let mem_view: gtk::TreeView = builder
+        let mem_tree: gtk::TreeView = builder
             .get_object("memory_view")
             .expect("Failed to load memory view");
+        let mem_view = MemoryView::new(&mem_tree);
+        mem_view.update(&gba);
 
-        let reg_model = gtk::ListStore::new(col_types);
-        let reg_view: gtk::TreeView = builder
+        let reg_tree: gtk::TreeView = builder
             .get_object("register_view")
             .expect("Failed to load register view");
+        let reg_view = RegisterView::new(&reg_tree);
+        reg_view.update(&gba);
 
         let window: gtk::ApplicationWindow = builder
             .get_object("app_window")
@@ -73,33 +104,21 @@ impl DebugWindow {
             .get_object("step_button")
             .expect("Failed to load step button");
 
-        update_models(&reg_model, &mem_model, &gba_ref);
-
         // These values all need to be cloned so we can move them into the closure
-        let mem_model_clone = mem_model.clone();
-        let reg_model_clone = reg_model.clone();
-        let gba_ref_clone = gba_ref.clone();
+        let mem_view_clone = mem_view.clone();
+        let reg_view_clone = reg_view.clone();
+        let gba_ref_clone = gba.clone();
         step_button.connect_clicked(move |_| {
             gba_ref_clone.borrow_mut().step();
-            update_models(&reg_model_clone, &mem_model_clone, &gba_ref_clone);
+            mem_view_clone.update(&gba_ref_clone);
+            &reg_view_clone.update(&gba_ref_clone);
         });
-
-        append_toggle_column(&mem_view);
-        append_text_column(&mem_view, 0, "Address");
-        append_text_column(&mem_view, 1, "Value");
-        mem_view.set_model(Some(&mem_model));
-
-        append_text_column(&reg_view, 0, "");
-        append_text_column(&reg_view, 1, "");
-        reg_view.set_model(Some(&reg_model));
 
         window.set_application(Some(application));
         window.show_all();
-
         DebugWindow {
-            mem_model,
-            reg_model,
+            mem_view,
+            reg_view,
         }
     }
 }
-
