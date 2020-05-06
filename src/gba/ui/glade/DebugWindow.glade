@@ -2,16 +2,6 @@
 <!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name address -->
-      <column type="gchararray"/>
-      <!-- column-name value -->
-      <column type="gchararray"/>
-      <!-- column-name instruction -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkApplicationWindow" id="app_window">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
@@ -22,23 +12,78 @@
       <placeholder/>
     </child>
     <child>
-      <object class="GtkScrolledWindow">
+      <object class="GtkPaned">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="shadow_type">in</property>
         <child>
-          <object class="GtkTreeView" id="tree">
+          <object class="GtkPaned">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="model">liststore1</property>
-            <property name="search_column">0</property>
-            <property name="enable_grid_lines">horizontal</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="register_view">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="headers_visible">False</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="step_button">
+                <property name="label" translatable="yes">Step</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="resize">False</property>
+                <property name="shrink">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="resize">True</property>
+            <property name="shrink">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkTreeView" id="memory_view">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="headers_clickable">False</property>
             <child internal-child="selection">
               <object class="GtkTreeSelection"/>
             </child>
           </object>
+          <packing>
+            <property name="resize">True</property>
+            <property name="shrink">True</property>
+          </packing>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name address -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+      <!-- column-name instruction -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>

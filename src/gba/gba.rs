@@ -14,9 +14,13 @@ impl GBA {
         }
     }
 
-    /// begin program execution
-    pub fn run(&mut self) {
-        self.arm_decode_table.execute(&mut self.bus, 0);
+    /// Execute a single instruction and update all hardware
+    pub fn step(&mut self) {
+        let pc = self.bus.cpu.PC;
+        println!("PC is {}", pc);
+        let val = self.bus.mmu.read(pc);
+        self.bus.mmu.write(pc, val + 1);
+        self.bus.cpu.PC += 1;
     }
 }
     
