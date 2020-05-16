@@ -1,17 +1,19 @@
 use super::io::IORegisters;
 
+use std::vec::Vec;
+
 /*  Memory Mapping Unit, main memory stored as byte arrays, 
     4-bytes per word, little-endian format
 */
 pub struct MMU {
-    ram: [u8; 0x1000],
+    pub ram: Vec<u32>,
     io: IORegisters,
 }
 
 impl MMU {
     pub fn new() -> MMU {
         MMU { 
-            ram: [0; 0x1000],
+            ram: vec![],
             io: IORegisters::new(),
         }
     }
@@ -28,7 +30,7 @@ impl MMU {
         let addr = (addr << 2) as usize;
         let bytes = &mut self.ram[addr..addr + 4];
         for (i, b) in bytes.iter_mut().enumerate() {
-            *b = (data >> (i * 8) & 0xff) as u8;
+            *b = data >> (i * 8) & 0xff;
         }
     }
 }

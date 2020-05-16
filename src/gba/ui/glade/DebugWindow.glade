@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkApplicationWindow" id="app_window">
@@ -8,9 +8,6 @@
     <property name="window_position">center</property>
     <property name="default_width">1000</property>
     <property name="default_height">720</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkPaned">
         <property name="visible">True</property>
@@ -38,7 +35,7 @@
             </child>
             <child>
               <object class="GtkButton" id="step_button">
-                <property name="label" translatable="yes">button</property>
+                <property name="label" translatable="yes">Step</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -64,6 +61,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="headers_clickable">False</property>
+                <property name="enable_grid_lines">both</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>
@@ -77,15 +75,8 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name address -->
-      <column type="gchararray"/>
-      <!-- column-name value -->
-      <column type="gchararray"/>
-      <!-- column-name instruction -->
-      <column type="gchararray"/>
-    </columns>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
   </object>
 </interface>

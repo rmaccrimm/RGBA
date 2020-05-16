@@ -7,10 +7,11 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::gba::GBA;
+use crate::gba::cpu::arm7tdmi::instruction::arm_decode::ARMDecodeTable;
 
 #[derive(Clone)]
 struct MemoryView {
-    model: gtk::ListStore
+    model: gtk::ListStore,
 }
 
 #[derive(Clone)]
@@ -21,11 +22,13 @@ struct RegisterView {
 pub struct DebugWindow {
     mem_view: MemoryView,
     reg_view: RegisterView,
+    decode_table: ARMDecodeTable,
 }
 
 fn append_text_column(treeview: &gtk::TreeView, model_index: i32, title: &str) {
     let column = gtk::TreeViewColumn::new();
     let cell = gtk::CellRendererText::new();
+    cell.set_property_font(Some("monospace"));
     column.pack_start(&cell, true);
     column.add_attribute(&cell, "text", model_index);
     column.set_title(title);
@@ -52,12 +55,15 @@ impl MemoryView {
 
     pub fn update(&self, gba: &Rc<RefCell<GBA>>) {
         self.model.clear();
-        for i in 0u32..100 {
+        for i in 0u32..256 {
             let val = gba.borrow().bus.mmu.read(i);
+            let address = format!("{:08X}", i);
+            let instr = gba.borrow().arm_decode_table.disassemble(val);
+            let val = format!("{:08X}", val);
             self.model.insert_with_values(
                 None,
                 &[0, 1, 2],
-                &[&format!("{:08X}", i), &format!("{:08X}", val), &""],
+                &[&address, &val, &instr],
             );
         }
     }
@@ -116,9 +122,11 @@ impl DebugWindow {
 
         window.set_application(Some(application));
         window.show_all();
+        let decode_table = ARMDecodeTable::new();
         DebugWindow {
             mem_view,
             reg_view,
+            decode_table,
         }
     }
 }
